@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Solidity Web3 Js example</title>
+</head>
+<body>
+	<div>
+	<button onclick="getTotalDeposits();" >
+		Get Total totalDeposits
+	</button>
+	<p id="totalDeposits"></p>
+	</div>
+<br>
+<br>
+	<input type="text" id="input-address" placeholder="address">
+<br>
+
+	<div>
+		<button onclick="getBalance();" >
+			Get Balances
+		</button>
+	
+		<p id="balance"></p>
+	</div>
+
+
+	<div>
+		<button onclick="deposit();" >
+			Deposit
+		</button>
+		<input type="text" id="input-dep-amount" placeholder="amount">
+		
+	</div>
+
+	<div>
+		<button onclick="withdraw();" >
+			Withdraw
+		</button>
+		<input type="text" id="input-with-amount" placeholder="amount">
+		
+	</div>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+<script>
+const web3 = new Web3('HTTP://127.0.0.1:7545');
+
+const contractAddress = '0xB9bC4A4aF44D10D5ceE5af86B07409Bdb54d3c8A';
+const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "balances",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "closeAccount",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalDeposits",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+
+
+async function getTotalDeposits() {
+
+	const contract = new web3.eth.Contract(contractABI, contractAddress);
+  	const value = await contract.methods.totalDeposits().call();
+  	console.log(value);
+	document.getElementById('totalDeposits').innerHTML = value
+
+}
+
+async function getBalance() {
+
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+const value = await contract.methods.balances(document.getElementById("input-address").value).call();
+console.log(value);
+document.getElementById('balance').innerHTML = value
+
+}
+
+async function deposit() {
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+const value = await contract.methods.deposit(parseInt(document.getElementById("input-dep-amount").value)).send({from:document.getElementById("input-address").value});
+console.log(value);
+}
+
+async function withdraw() {
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+const value = await contract.methods.withdraw(parseInt(document.getElementById("input-with-amount").value)).send({from:document.getElementById("input-address").value});
+console.log(value);
+}
+</script>
